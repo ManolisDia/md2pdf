@@ -15,6 +15,18 @@ npm start
 
 The browser opens to `http://localhost:5173`. The first PDF render warms up Puppeteer — give it a couple of seconds.
 
+## Desktop app (no terminal)
+
+Run once:
+
+```bash
+npm run app:dist
+```
+
+That produces `release/md2pdf.exe` — a single ~100 MB portable Windows executable. Double-click it to launch md2pdf in its own window. Pin it to your Start Menu / taskbar / desktop and you'll never need the terminal again.
+
+`npm run app` is also available — same thing but without producing the .exe (uses the project's local Electron install).
+
 ### Requirements
 
 - Node.js 20+

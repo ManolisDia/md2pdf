@@ -12,7 +12,13 @@ import type { StyleConfig } from "../shared/types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const ROOT_DIR = resolve(__dirname, "..", "..");
+// In the packaged Electron app the working directory is opaque, so the
+// host passes MD2PDF_ROOT pointing at the unpacked app folder where
+// themes/, assets/, print/ and config/ live. Falls back to the dev
+// path (two levels up from src/server/).
+const ROOT_DIR = process.env.MD2PDF_ROOT
+  ? resolve(process.env.MD2PDF_ROOT)
+  : resolve(__dirname, "..", "..");
 const PORT = Number(process.env.PORT ?? 5174);
 const CLIENT_PORT = Number(process.env.CLIENT_PORT ?? 5173);
 const PROD = process.env.NODE_ENV === "production";

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "electron/main.cjs",
   "description": "Local web app: Markdown → PDF with Obsidian-flavored features and themeable styling",
   "scripts": {
     "start": "concurrently -k -n server,client -c blue,magenta \"tsx src/server/index.ts\" \"vite\"",
@@ -11,7 +12,39 @@
     "build": "vite build && tsc -p tsconfig.server.json",
     "serve": "NODE_ENV=production node dist-server/server/index.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.server.json",
-    "test": "node --test --import tsx tests/*.test.ts"
+    "test": "node --test --import tsx tests/*.test.ts",
+    "app": "npm run build && electron .",
+    "app:dist": "npm run build && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.md2pdf.app",
+    "productName": "md2pdf",
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "dist-client/**/*",
+      "dist-server/**/*",
+      "themes/**/*",
+      "assets/**/*",
+      "print/**/*",
+      "config/**/*",
+      "package.json",
+      "node_modules/**/*",
+      "!node_modules/**/test/**",
+      "!node_modules/**/tests/**",
+      "!node_modules/**/*.md",
+      "!node_modules/**/*.map",
+      "!node_modules/**/*.d.ts"
+    ],
+    "win": {
+      "target": "portable"
+    },
+    "portable": {
+      "artifactName": "md2pdf.exe"
+    }
   },
   "engines": {
     "node": ">=20"
@@ -45,6 +78,8 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.10.2",
     "concurrently": "^9.1.0",
+    "electron": "^42.0.1",
+    "electron-builder": "^26.8.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"

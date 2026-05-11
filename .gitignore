@@ -1,6 +1,7 @@
 node_modules/
 dist-client/
 dist-server/
+release/
 .vite/
 *.log
 .DS_Store
