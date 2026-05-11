@@ -144,23 +144,57 @@ export async function setPreviewHtml(
 }
 
 function placeNaturalBreaks(sheet: HTMLElement, dims: ComputedDims): void {
-  // Remove old break markers.
-  sheet.querySelectorAll(".natural-break").forEach((el) => el.remove());
+  // Remove old natural break markers (manual ones live inside .md-doc).
+  sheet.querySelectorAll(":scope > .natural-break").forEach((el) => el.remove());
 
   const article = sheet.querySelector<HTMLElement>("#preview");
   if (!article) return;
-  const innerHeight = article.scrollHeight;
-  if (innerHeight <= dims.contentHPx + 4) return; // single page
 
-  const numBreaks = Math.floor((innerHeight - 1) / dims.contentHPx);
-  for (let i = 1; i <= numBreaks; i++) {
-    const y = dims.marginPx + i * dims.contentHPx;
+  const sheetRect = sheet.getBoundingClientRect();
+  const articleRect = article.getBoundingClientRect();
+  const articleStartY = articleRect.top - sheetRect.top;
+  const articleEndY = articleStartY + article.scrollHeight;
+
+  // Collect manual \pagebreak elements with their y positions on the sheet.
+  const manualBreaks = Array.from(
+    article.querySelectorAll<HTMLElement>(".page-break"),
+  )
+    .map((el) => ({
+      el,
+      y: el.getBoundingClientRect().top - sheetRect.top,
+    }))
+    .sort((a, b) => a.y - b.y);
+
+  let cursor = articleStartY;
+  let pageNum = 1;
+
+  const placeNatural = (y: number): void => {
+    pageNum++;
     const div = document.createElement("div");
     div.className = "natural-break";
     div.style.top = `${y}px`;
-    div.dataset.page = String(i + 1);
+    div.dataset.page = String(pageNum);
     sheet.appendChild(div);
+  };
+
+  const fillUntil = (stopY: number): void => {
+    // Add natural breaks every contentHPx from the cursor until either
+    // we'd overshoot stopY or we run out of room.
+    while (cursor + dims.contentHPx < stopY - 1) {
+      cursor += dims.contentHPx;
+      placeNatural(cursor);
+    }
+  };
+
+  for (const mb of manualBreaks) {
+    fillUntil(mb.y);
+    // Manual break consumes the rest of the current page.
+    cursor = mb.y;
+    pageNum++;
+    // Annotate the manual break with its resulting page number.
+    mb.el.dataset.page = String(pageNum);
   }
+  fillUntil(articleEndY);
 }
 
 async function runMermaidIn(root: HTMLElement): Promise<void> {
