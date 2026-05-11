@@ -5,8 +5,8 @@
 # Themes: academic | minimal | technical | elegant | github
 #         newspaper | terminal | pastel | whitepaper | magazine
 
-theme: academic
-dark: false
+theme: whitepaper
+dark: true
 
 page:
   size: A4            # A4 | Letter | Legal

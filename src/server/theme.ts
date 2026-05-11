@@ -5,8 +5,8 @@ import YAML from "yaml";
 import type { StyleConfig } from "../shared/types.js";
 
 const DEFAULT_CONFIG: StyleConfig = {
-  theme: "academic",
-  dark: false,
+  theme: "whitepaper",
+  dark: true,
   page: { size: "A4", margin: "2cm" },
   fonts: {
     body: "Source Serif",
