@@ -59,7 +59,9 @@ export function obsidianCallouts(md: MarkdownIt): void {
       tok.attrSet("data-callout", kind);
       tok.meta = { callout: { kind, title: title || info.label, icon: info.icon } };
       inlineTok.content = rest;
-      inlineTok.children = state.md.parseInline(rest, state.env)[0]?.children ?? [];
+      // Don't pre-tokenize children — the "inline" core rule fires after this
+      // and will re-tokenize from `content`. Setting children here causes
+      // double-rendering.
     }
   });
 

@@ -6,7 +6,7 @@ import open from "open";
 import YAML from "yaml";
 
 import { renderToHtml, warmHighlighter } from "./render.js";
-import { renderPdf, closeBrowser } from "./pdf.js";
+import { renderPdf, closeBrowser, takePrintJobHtml } from "./pdf.js";
 import { loadDefaultConfig, parseStyleConfig, configToCssVars } from "./theme.js";
 import type { StyleConfig } from "../shared/types.js";
 
@@ -23,8 +23,29 @@ app.use(express.json({ limit: "5mb" }));
 // Serve themes and assets as static so the client can pull them.
 app.use("/themes", express.static(resolve(ROOT_DIR, "themes")));
 app.use("/assets", express.static(resolve(ROOT_DIR, "assets")));
+// Vendor: mermaid, katex — served so Puppeteer can fetch them via HTTP.
+app.use(
+  "/__vendor/mermaid",
+  express.static(resolve(ROOT_DIR, "node_modules", "mermaid", "dist")),
+);
+app.use(
+  "/__vendor/katex",
+  express.static(resolve(ROOT_DIR, "node_modules", "katex", "dist")),
+);
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+// Internal: Puppeteer fetches the prepared print HTML from here so it
+// gets a normal HTTP origin (mermaid ESM imports + KaTeX font fetches
+// then work). Tokens are single-use.
+app.get("/__print/:id", (req, res) => {
+  const html = takePrintJobHtml(req.params.id);
+  if (!html) {
+    res.status(404).send("not found");
+    return;
+  }
+  res.type("html").send(html);
+});
 
 app.get("/api/themes", (_req, res) => {
   res.json({

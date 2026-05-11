@@ -1,12 +1,26 @@
 import puppeteer, { type Browser } from "puppeteer-core";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { randomUUID } from "node:crypto";
 import { detectChrome } from "./chrome.js";
 import { configToCssVars } from "./theme.js";
 import type { StyleConfig } from "../shared/types.js";
 
+const API_PORT = Number(process.env.PORT ?? 5174);
+const ASSET_BASE = `http://localhost:${API_PORT}`;
+
 let browserPromise: Promise<Browser> | null = null;
+
+// In-memory stash of pending print jobs (HTML keyed by token). Express
+// serves them at /__print/:id so Puppeteer can `page.goto` an HTTP URL
+// rather than using setContent (which gives the page an opaque origin
+// that blocks ESM imports of mermaid).
+const pendingPrintJobs = new Map<string, string>();
+export function takePrintJobHtml(id: string): string | undefined {
+  const html = pendingPrintJobs.get(id);
+  pendingPrintJobs.delete(id);
+  return html;
+}
 
 function getBrowser(): Promise<Browser> {
   if (browserPromise) return browserPromise;
@@ -43,14 +57,34 @@ export async function renderPdf(opts: PdfOptions): Promise<Buffer> {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
+    page.on("console", (msg) => {
+      const t = msg.type();
+      if (t === "error" || t === "warn") {
+        console.error(`[pdf-page:${t}]`, msg.text());
+      }
+    });
+    page.on("pageerror", (err) => {
+      console.error("[pdf-page:error]", err.message);
+    });
+    page.on("requestfailed", (req) => {
+      console.error("[pdf-page:requestfailed]", req.url(), req.failure()?.errorText);
+    });
+
     const html = await buildPrintHtml(opts);
-    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    const jobId = randomUUID();
+    pendingPrintJobs.set(jobId, html);
+    try {
+      await page.goto(`${ASSET_BASE}/__print/${jobId}`, {
+        waitUntil: "domcontentloaded",
+      });
+    } finally {
+      pendingPrintJobs.delete(jobId);
+    }
 
     // Wait for fonts and Mermaid/KaTeX rendering signal.
-    await page.waitForFunction(
-      () => (window as unknown as { __renderReady?: boolean }).__renderReady === true,
-      { timeout: 30_000 },
-    );
+    await page.waitForFunction("window.__renderReady === true", {
+      timeout: 30_000,
+    });
     await page.evaluateHandle("document.fonts.ready");
 
     const margin = opts.config.page.margin;
@@ -101,27 +135,17 @@ async function buildPrintHtml(opts: PdfOptions): Promise<string> {
     resolve(rootDir, "node_modules", "katex", "dist", "katex.min.css"),
     "utf8",
   );
-  const katexDir = pathToFileURL(
-    resolve(rootDir, "node_modules", "katex", "dist") + "/",
-  ).toString();
-  // Rewrite KaTeX font URLs to absolute file:// paths so Puppeteer loads them.
+  // Rewrite KaTeX font URLs to HTTP URLs served by Express, so Puppeteer can fetch them.
   const katexCssPatched = katexCss.replace(
     /url\((['"]?)fonts\//g,
-    `url($1${katexDir}fonts/`,
+    `url($1${ASSET_BASE}/__vendor/katex/fonts/`,
   );
 
   const titleRaw = (frontmatter.title as string) || "Document";
   const title = escapeHtml(titleRaw);
   const meta = renderFrontmatterHeader(frontmatter);
 
-  const mermaidPath = resolve(
-    rootDir,
-    "node_modules",
-    "mermaid",
-    "dist",
-    "mermaid.esm.min.mjs",
-  );
-  const mermaidUrl = pathToFileURL(mermaidPath).toString();
+  const mermaidUrl = `${ASSET_BASE}/__vendor/mermaid/mermaid.esm.min.mjs`;
 
   return tmpl
     .replace(/\{\{TITLE\}\}/g, title)
