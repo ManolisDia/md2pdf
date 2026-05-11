@@ -58,7 +58,9 @@ export function applyDarkMode(dark: boolean): void {
   if (host) host.dataset.mode = dark ? "dark" : "light";
 }
 
-let paginated = false;
+// Pagination defaults to ON so users can see where Chrome will break
+// pages naturally — that lets them decide where to put manual breaks.
+let paginated = true;
 let previewer: import("pagedjs").Previewer | null = null;
 
 export function setPaginated(on: boolean): void {

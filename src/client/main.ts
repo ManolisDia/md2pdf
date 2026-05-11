@@ -259,6 +259,8 @@ function setupDropzone(): void {
     insertBlockAtCursor(mainEditor, "\\pagebreak");
   });
 
+  // Initialize Pages button as active (paginated is on by default).
+  paginateBtn.classList.toggle("is-active", isPaginated());
   paginateBtn.addEventListener("click", () => {
     const on = !isPaginated();
     setPaginated(on);
