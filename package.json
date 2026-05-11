@@ -40,10 +40,19 @@
       "!node_modules/**/*.d.ts"
     ],
     "win": {
-      "target": "portable"
+      "target": ["nsis", "portable"]
     },
     "portable": {
-      "artifactName": "md2pdf.exe"
+      "artifactName": "md2pdf-portable.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "md2pdf",
+      "artifactName": "md2pdf-setup.exe"
     }
   },
   "engines": {
