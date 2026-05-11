@@ -66,6 +66,22 @@ body {
 }
 .btn-ghost:hover { background: #f4f4f5; }
 
+.filename-input {
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 13px;
+  background: white;
+  width: 200px;
+  color: #111;
+}
+.filename-input:focus {
+  outline: none;
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 2px rgba(31, 111, 235, 0.15);
+}
+
 .app-main {
   display: grid;
   grid-template-columns: 1fr 1fr 340px;

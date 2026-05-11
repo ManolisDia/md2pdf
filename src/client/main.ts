@@ -99,6 +99,7 @@ const toastEl = document.getElementById("toast")!;
 const dropzoneEl = document.getElementById("dropzone")!;
 const pagebreakBtn = document.getElementById("pagebreak-btn") as HTMLButtonElement;
 const darkBtn = document.getElementById("dark-btn") as HTMLButtonElement;
+const filenameInput = document.getElementById("filename-input") as HTMLInputElement;
 
 let markdownValue = SAMPLE_MARKDOWN;
 let yamlValue = "";
@@ -135,6 +136,7 @@ async function doRender(): Promise<void> {
     applyPageCss(size, margin);
     applyDarkMode(parseDarkFromYaml(yamlValue));
     await setPreviewHtml(previewHostOuter, result.html, { size, margin });
+    syncFilenamePlaceholder();
   } catch (err) {
     toast((err as Error).message, true);
   }
@@ -177,7 +179,15 @@ function setYamlTheme(yaml: string, theme: string): string {
 function inferFilename(md: string): string {
   const m = /^title:\s*["']?([^"'\n]+)["']?/m.exec(md);
   const base = (m?.[1] ?? "document").trim();
-  return base.replace(/[^a-zA-Z0-9_\-]+/g, "_").slice(0, 80) || "document";
+  return sanitizeFilename(base);
+}
+
+function sanitizeFilename(s: string): string {
+  return s.replace(/[^a-zA-Z0-9_\-]+/g, "_").slice(0, 80) || "document";
+}
+
+function syncFilenamePlaceholder(): void {
+  filenameInput.placeholder = inferFilename(markdownValue);
 }
 
 function setupDropzone(): void {
@@ -284,14 +294,18 @@ function setupDropzone(): void {
     try {
       const blob = await apiPdf(markdownValue, yamlValue);
       const url = URL.createObjectURL(blob);
+      const typed = filenameInput.value.trim();
+      const filename =
+        (typed ? sanitizeFilename(typed) : inferFilename(markdownValue)) +
+        ".pdf";
       const a = document.createElement("a");
       a.href = url;
-      a.download = inferFilename(markdownValue) + ".pdf";
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast("PDF downloaded");
+      toast("PDF downloaded as " + filename);
     } catch (err) {
       toast((err as Error).message, true);
     } finally {
