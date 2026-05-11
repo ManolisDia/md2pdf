@@ -1,0 +1,71 @@
+/* elegant — book-like, refined, serif with display headings. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Source Serif", "Georgia", serif;
+  --md-font-headings: "Source Serif", "Georgia", serif;
+  --md-color-text: #2a1810;
+  --md-color-headings: #1a0f08;
+  --md-color-link: #7c3a1d;
+  --md-color-accent: #b45309;
+  --md-color-rule: #d6c5b3;
+  --md-color-bg: #fefaf4;
+  --md-color-code-bg: #f6efe1;
+  --md-line-height: 1.75;
+  --md-max-width: 640px;
+}
+
+.md-doc h1 {
+  text-align: center;
+  font-size: 2.6em;
+  font-weight: 400;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  border-bottom: none;
+  margin-top: 1em;
+  margin-bottom: 0.8em;
+}
+.md-doc h1::after {
+  content: "";
+  display: block;
+  width: 3em;
+  height: 1px;
+  background: var(--md-color-accent);
+  margin: 0.6em auto;
+}
+
+.md-doc h2 {
+  font-size: 1.6em;
+  font-variant: small-caps;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border-bottom: none;
+}
+
+.md-doc h3 {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.md-doc blockquote {
+  font-style: italic;
+  font-size: 1.05em;
+  border-left: 2px solid var(--md-color-accent);
+  padding-left: 1.4em;
+}
+
+.md-doc p { text-align: justify; hyphens: auto; }
+.md-doc p:first-of-type::first-letter {
+  font-size: 1em;
+}
+
+.md-doc hr {
+  border: none;
+  text-align: center;
+  margin: 2em 0;
+}
+.md-doc hr::after {
+  content: "❦";
+  color: var(--md-color-accent);
+  font-size: 1.4em;
+}

@@ -1,0 +1,51 @@
+/* academic — serif body, classic look, justified text, drop-cap-ish first letter. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Source Serif", "Georgia", serif;
+  --md-font-headings: "Source Serif", "Georgia", serif;
+  --md-color-headings: #1a1a1a;
+  --md-color-link: #8b2c2c;
+  --md-color-accent: #b58900;
+  --md-max-width: 700px;
+}
+
+.md-doc {
+  text-align: justify;
+  hyphens: auto;
+}
+
+.md-doc h1 {
+  text-align: center;
+  border-bottom: none;
+  font-weight: 700;
+  margin-top: 0.5em;
+  font-size: 2.2em;
+}
+
+.md-doc h2 {
+  border-bottom: none;
+  font-style: italic;
+  font-weight: 600;
+  text-align: left;
+}
+
+.md-doc h3 {
+  font-style: italic;
+  font-weight: 600;
+}
+
+.md-doc blockquote {
+  font-style: italic;
+  border-left-width: 2px;
+}
+
+.md-doc pre {
+  font-style: normal;
+  background: #fafaf7;
+  border: 1px solid var(--md-color-rule);
+}
+
+.md-doc table th {
+  background: #fafaf7;
+}

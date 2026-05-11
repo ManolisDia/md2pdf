@@ -1,0 +1,31 @@
+/* github — looks like a rendered README on github.com. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+  --md-font-headings: -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+  --md-font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --md-color-text: #1f2328;
+  --md-color-headings: #1f2328;
+  --md-color-link: #0969da;
+  --md-color-accent: #1f6feb;
+  --md-color-code-bg: #f6f8fa;
+  --md-color-rule: #d1d9e0;
+}
+
+.md-doc h1, .md-doc h2 {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--md-color-rule);
+}
+
+.md-doc table tr:nth-child(2n) td { background: var(--md-color-code-bg); }
+
+.md-doc pre {
+  background: var(--md-color-code-bg);
+  border: 0;
+}
+
+.md-doc blockquote {
+  color: #59636e;
+  border-left: 4px solid var(--md-color-rule);
+}

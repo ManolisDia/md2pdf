@@ -1,0 +1,33 @@
+# md2pdf — default styling.
+# Edit fonts, colors, spacing here. The active theme provides the
+# starting palette; values you set here override it.
+#
+# Themes: academic | minimal | technical | elegant | github
+
+theme: academic
+
+page:
+  size: A4            # A4 | Letter | Legal
+  margin: 2cm
+
+fonts:
+  body: "Source Serif"
+  headings: "Inter"
+  mono: "JetBrains Mono"
+  base_size: 11pt
+
+colors:
+  text: "#1a1a1a"
+  headings: "#0d2538"
+  link: "#1f6feb"
+  accent: "#d97706"
+  code_bg: "#f4f4f5"
+  rule: "#e4e4e7"
+
+spacing:
+  line_height: 1.6
+  paragraph: 0.6em
+  heading_top: 1.4em
+  max_width: 720px
+
+custom_css: null

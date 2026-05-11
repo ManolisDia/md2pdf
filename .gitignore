@@ -1,0 +1,11 @@
+node_modules/
+dist-client/
+dist-server/
+.vite/
+*.log
+.DS_Store
+.env
+.env.local
+.cache/
+out/
+tmp/

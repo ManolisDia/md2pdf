@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>md2pdf</title>
+<link rel="stylesheet" href="/themes/_variables.css">
+<link rel="stylesheet" href="./styles/app.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="app-brand">md2pdf</div>
+  <div class="app-actions">
+    <label class="control">
+      <span>Theme</span>
+      <select id="theme-select">
+        <option value="academic">Academic</option>
+        <option value="minimal">Minimal</option>
+        <option value="technical">Technical</option>
+        <option value="elegant">Elegant</option>
+        <option value="github">GitHub</option>
+      </select>
+    </label>
+    <button id="load-btn" class="btn">Load .md</button>
+    <button id="download-btn" class="btn btn-primary">Download PDF</button>
+    <button id="toggle-config" class="btn btn-ghost" title="Toggle style config">Style</button>
+  </div>
+</header>
+
+<main class="app-main">
+  <section class="pane pane-editor">
+    <div class="pane-title">Markdown</div>
+    <div id="editor"></div>
+  </section>
+  <section class="pane pane-preview">
+    <div class="pane-title">Preview</div>
+    <div id="preview-host">
+      <article id="preview" class="md-doc"></article>
+    </div>
+  </section>
+  <aside class="pane pane-sidebar" id="sidebar">
+    <div class="pane-title">style.yaml</div>
+    <div id="config-editor"></div>
+    <div class="sidebar-actions">
+      <button id="save-config" class="btn">Save defaults</button>
+      <span id="config-status" class="status"></span>
+    </div>
+  </aside>
+</main>
+
+<input type="file" id="file-input" accept=".md,.markdown,text/markdown" hidden>
+<div id="dropzone" class="dropzone">Drop a .md file to load</div>
+<div id="toast" class="toast"></div>
+
+<script type="module" src="./main.ts"></script>
+</body>
+</html>

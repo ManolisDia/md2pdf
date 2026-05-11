@@ -1,0 +1,52 @@
+{
+  "name": "md2pdf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local web app: Markdown → PDF with Obsidian-flavored features and themeable styling",
+  "scripts": {
+    "start": "concurrently -k -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:client": "vite",
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "serve": "NODE_ENV=production node dist-server/server/index.js",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.server.json",
+    "test": "node --test --import tsx tests/*.test.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.0",
+    "@codemirror/lang-yaml": "^6.1.1",
+    "@codemirror/state": "^6.5.0",
+    "@codemirror/view": "^6.34.0",
+    "codemirror": "^6.0.1",
+    "express": "^4.21.1",
+    "gray-matter": "^4.0.3",
+    "katex": "^0.16.11",
+    "markdown-it": "^14.1.0",
+    "markdown-it-anchor": "^9.2.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-katex": "^2.0.3",
+    "markdown-it-mark": "^4.0.0",
+    "markdown-it-sub": "^2.0.0",
+    "markdown-it-sup": "^2.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mermaid": "^11.4.1",
+    "morphdom": "^2.7.4",
+    "open": "^10.1.0",
+    "puppeteer-core": "^23.10.4",
+    "shiki": "^1.24.0",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
+  }
+}

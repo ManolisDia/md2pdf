@@ -1,0 +1,41 @@
+/* minimal — clean sans-serif, lots of whitespace, no chrome. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Inter", -apple-system, sans-serif;
+  --md-font-headings: "Inter", -apple-system, sans-serif;
+  --md-color-text: #2a2a2a;
+  --md-color-headings: #111;
+  --md-color-link: #555;
+  --md-color-accent: #000;
+  --md-color-rule: #ececec;
+  --md-max-width: 680px;
+  --md-line-height: 1.7;
+  --md-heading-top: 2em;
+}
+
+.md-doc h1 { border-bottom: none; font-weight: 300; font-size: 2.4em; letter-spacing: -0.02em; }
+.md-doc h2 { border-bottom: none; font-weight: 400; letter-spacing: -0.01em; }
+.md-doc h3, .md-doc h4, .md-doc h5, .md-doc h6 { font-weight: 500; }
+
+.md-doc a {
+  border-bottom: 1px solid currentColor;
+}
+
+.md-doc blockquote {
+  border-left: none;
+  padding-left: 0;
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+.md-doc pre {
+  background: #fafafa;
+  border: 1px solid var(--md-color-rule);
+}
+
+.md-doc .callout {
+  border: none;
+  background: #fafafa;
+  border-left: 2px solid var(--md-callout-note);
+}

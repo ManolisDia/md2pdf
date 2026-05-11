@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<style>
+/*{{PAGE_CSS}}*/
+/*{{KATEX_CSS}}*/
+/*{{VARIABLES_CSS}}*/
+/*{{THEME_CSS}}*/
+/*{{USER_VARS}}*/
+
+/* Print-only document chrome */
+html, body { margin: 0; padding: 0; }
+body { background: white; }
+
+.doc-header {
+  text-align: center;
+  margin-bottom: 2em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--md-color-rule);
+}
+.doc-title {
+  font-family: var(--md-font-headings);
+  color: var(--md-color-headings);
+  font-size: 2.2em;
+  margin: 0 0 0.4em 0;
+  border-bottom: none !important;
+}
+.doc-author, .doc-date {
+  color: var(--md-color-text);
+  opacity: 0.7;
+  font-size: 0.95em;
+}
+.doc-date { margin-top: 0.2em; }
+
+/* Avoid breaking key blocks across pages */
+pre, .callout, table, blockquote { page-break-inside: avoid; }
+h1, h2, h3 { page-break-after: avoid; }
+img, svg, .mermaid { page-break-inside: avoid; }
+
+/*{{CUSTOM_CSS}}*/
+</style>
+</head>
+<body>
+<article class="md-doc">
+{{FRONTMATTER_HEADER}}
+{{BODY}}
+</article>
+
+<script type="module">
+import mermaid from "{{MERMAID_URL}}";
+
+(async () => {
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "default",
+    securityLevel: "loose",
+    fontFamily: getComputedStyle(document.body).getPropertyValue("--md-font-body"),
+    gantt: { useWidth: 800 },
+  });
+
+  const nodes = Array.from(document.querySelectorAll("pre.mermaid"));
+  if (nodes.length > 0) {
+    try {
+      await mermaid.run({ nodes });
+    } catch (e) {
+      console.error("mermaid render failed", e);
+    }
+  }
+
+  // Wait one more frame to make sure layout settled.
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  window.__renderReady = true;
+})();
+</script>
+</body>
+</html>

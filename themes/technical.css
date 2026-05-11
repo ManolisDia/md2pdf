@@ -1,0 +1,46 @@
+/* technical — engineering docs vibe, mono headings, structured. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Inter", -apple-system, sans-serif;
+  --md-font-headings: "JetBrains Mono", Consolas, monospace;
+  --md-color-text: #1f2937;
+  --md-color-headings: #0f172a;
+  --md-color-link: #0369a1;
+  --md-color-accent: #0891b2;
+  --md-color-code-bg: #f1f5f9;
+  --md-color-rule: #cbd5e1;
+}
+
+.md-doc h1 {
+  font-size: 1.7em;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--md-color-headings);
+  padding-bottom: 0.4em;
+}
+.md-doc h1::before { content: "# "; opacity: 0.4; }
+.md-doc h2::before { content: "## "; opacity: 0.4; }
+.md-doc h3::before { content: "### "; opacity: 0.4; }
+.md-doc h2 { font-size: 1.35em; border-bottom: 1px solid var(--md-color-rule); }
+.md-doc h3 { font-size: 1.1em; border-bottom: none; }
+
+.md-doc pre {
+  border: 1px solid var(--md-color-rule);
+  background: #0f172a;
+  color: #e2e8f0;
+}
+.md-doc pre code { color: inherit; }
+
+.md-doc :not(pre) > code {
+  background: var(--md-color-code-bg);
+  color: #0f172a;
+  border: 1px solid var(--md-color-rule);
+}
+
+.md-doc table {
+  border: 1px solid var(--md-color-headings);
+}
+.md-doc table th {
+  background: var(--md-color-headings);
+  color: white;
+}
