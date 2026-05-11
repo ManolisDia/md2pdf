@@ -105,58 +105,70 @@ body {
 #preview-host {
   flex: 1;
   overflow: auto;
-  padding: 20px 0;
+  padding: 24px 0;
   background: #fafafa;
-}
-/* Note: NO background on #preview here — .md-doc sets its own bg from
-   theme variables so light/dark themes both render correctly. The
-   shadow comes from the wrapper instead. */
-#preview {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  border-radius: 4px;
-}
-
-/* Paged.js page-look in the preview pane. The page wrapper gets a
-   bright "paper" background in light mode and a soft dark backdrop in
-   dark mode, so the .md-doc dark bg sits inside it cleanly. */
-#preview-host .pagedjs_pages {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  padding: 8px 0 28px;
-  counter-reset: pagecount;
-}
-#preview-host .pagedjs_page {
-  background: white;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  margin: 0;
-  position: relative;
-  counter-increment: pagecount;
-}
-#preview-host .pagedjs_page::after {
-  content: "page " counter(pagecount);
-  position: absolute;
-  bottom: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: #6b7280;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* When the preview is in dark mode, give the surrounding pane a darker
-   backdrop and a dark paper. The .md-doc inside sets its own theme-
-   specific dark background from its CSS variables. The rest of the app
-   chrome stays in normal light styling. */
-#preview-host[data-mode="dark"] { background: #0e0e10; }
-#preview-host[data-mode="dark"] .pagedjs_page {
-  background: #18181b;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+/* The single "sheet" rendered in the preview pane: sized to match the
+   PDF page width with the same margin, so the layout the user sees ≈
+   the layout that ends up in the PDF. The .md-doc inside fills the
+   sheet's content area. Sheet bg is copied from .md-doc's computed bg
+   via JS each render — so light = white, dark = theme dark, no white
+   border. */
+.preview-sheet {
+  width: var(--sheet-width, 794px);
+  min-height: var(--sheet-page-h, 971px);
+  padding: var(--sheet-padding, 76px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  position: relative;
+  margin: 0;
+  box-sizing: border-box;
+  background: white;
 }
-#preview-host[data-mode="dark"] #preview { box-shadow: 0 4px 14px rgba(0,0,0,0.6); }
-#preview-host[data-mode="dark"] .pagedjs_page::after { color: #a1a1aa; }
+.preview-sheet > .md-doc {
+  max-width: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Natural page-break indicators: thin dashed line drawn at exact
+   page-content-height intervals, with a "page N" label. These show
+   where Chrome will break the PDF if you don't insert manual breaks. */
+.preview-sheet .natural-break {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--md-color-rule) 70%, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.preview-sheet .natural-break::after {
+  content: "page " attr(data-page);
+  position: absolute;
+  right: 10px;
+  top: -10px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--md-color-text) 50%, transparent);
+  background: var(--md-color-bg);
+  padding: 0 6px;
+  font-family: var(--md-font-headings);
+}
+
+/* Dark mode: the surrounding pane goes dark. The .preview-sheet bg is
+   the theme's --md-color-bg, so it stays dark too (no white border).
+   The rest of the app chrome stays in normal light styling. */
+#preview-host[data-mode="dark"] { background: #0e0e10; }
+#preview-host[data-mode="dark"] .preview-sheet {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
 
 /* Active button state — used for paginate toggle, dark toggle, etc. */
 .btn.is-active { background: #1f6feb; color: white; border-color: #1f6feb; }

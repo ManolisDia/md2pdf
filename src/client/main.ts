@@ -6,8 +6,6 @@ import {
   applyDarkMode,
   applyPageCss,
   applyTheme,
-  isPaginated,
-  setPaginated,
   setPreviewHtml,
 } from "./preview.js";
 import { apiLoadConfig, apiPdf, apiRender, apiSaveConfig } from "./api.js";
@@ -90,7 +88,6 @@ gantt
 
 const editorHost = document.getElementById("editor")!;
 const previewHostOuter = document.getElementById("preview-host")!;
-const previewHost = document.getElementById("preview")!;
 const configHost = document.getElementById("config-editor")!;
 const themeSelect = document.getElementById("theme-select") as HTMLSelectElement;
 const downloadBtn = document.getElementById("download-btn") as HTMLButtonElement;
@@ -101,7 +98,6 @@ const configStatus = document.getElementById("config-status")!;
 const toastEl = document.getElementById("toast")!;
 const dropzoneEl = document.getElementById("dropzone")!;
 const pagebreakBtn = document.getElementById("pagebreak-btn") as HTMLButtonElement;
-const paginateBtn = document.getElementById("paginate-btn") as HTMLButtonElement;
 const darkBtn = document.getElementById("dark-btn") as HTMLButtonElement;
 
 let markdownValue = SAMPLE_MARKDOWN;
@@ -119,9 +115,7 @@ function toast(msg: string, isError = false): void {
 
 function debounceRender(): void {
   if (renderTimer) window.clearTimeout(renderTimer);
-  // Paginated mode runs Paged.js which is much slower — debounce more.
-  const delay = isPaginated() ? 500 : 150;
-  renderTimer = window.setTimeout(doRender, delay);
+  renderTimer = window.setTimeout(doRender, 150);
 }
 
 function debounceConfig(): void {
@@ -140,10 +134,7 @@ async function doRender(): Promise<void> {
     const { size, margin } = parsePageFromYaml(yamlValue);
     applyPageCss(size, margin);
     applyDarkMode(parseDarkFromYaml(yamlValue));
-    // In paginated mode pagedjs rebuilds the host. Pass the outer host so
-    // the rebuild can happen.
-    const host = isPaginated() ? previewHostOuter : previewHost;
-    await setPreviewHtml(host, result.html);
+    await setPreviewHtml(previewHostOuter, result.html, { size, margin });
   } catch (err) {
     toast((err as Error).message, true);
   }
@@ -257,15 +248,6 @@ function setupDropzone(): void {
   pagebreakBtn.addEventListener("click", () => {
     if (!mainEditor) return;
     insertBlockAtCursor(mainEditor, "\\pagebreak");
-  });
-
-  // Initialize Pages button as active (paginated is on by default).
-  paginateBtn.classList.toggle("is-active", isPaginated());
-  paginateBtn.addEventListener("click", () => {
-    const on = !isPaginated();
-    setPaginated(on);
-    paginateBtn.classList.toggle("is-active", on);
-    debounceRender();
   });
 
   darkBtn.addEventListener("click", () => {

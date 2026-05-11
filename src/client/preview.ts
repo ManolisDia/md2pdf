@@ -36,9 +36,7 @@ export function applyCssVars(cssVarsBlock: string): void {
     userVarStyleEl.dataset.role = "user-vars";
     document.head.appendChild(userVarStyleEl);
   }
-  // Scope to .md-doc so the vars apply in BOTH fast preview and the
-  // paginated (pagedjs) preview, where the article ends up nested inside
-  // .pagedjs_page wrappers.
+  // Scope to .md-doc so vars apply to the rendered document only.
   const scoped = cssVarsBlock.replace(":root", ".md-doc");
   userVarStyleEl.textContent = scoped;
 }
@@ -53,48 +51,80 @@ export function applyPageCss(size: string, margin: string): void {
 }
 
 export function applyDarkMode(dark: boolean): void {
-  // Scope dark mode to the preview area only — the app chrome stays light.
   const host = document.getElementById("preview-host");
   if (host) host.dataset.mode = dark ? "dark" : "light";
 }
 
-// Pagination defaults to ON so users can see where Chrome will break
-// pages naturally — that lets them decide where to put manual breaks.
-let paginated = true;
-let previewer: import("pagedjs").Previewer | null = null;
+const PAGE_SIZE_MM: Record<string, { width: number; height: number }> = {
+  A4: { width: 210, height: 297 },
+  Letter: { width: 215.9, height: 279.4 },
+  Legal: { width: 215.9, height: 355.6 },
+};
 
-export function setPaginated(on: boolean): void {
-  paginated = on;
+function mmToPx(mm: number): number {
+  return (mm * 96) / 25.4;
 }
-export function isPaginated(): boolean {
-  return paginated;
+
+function parseCssLengthToPx(s: string): number {
+  const m = /^([\d.]+)\s*(mm|cm|in|pt|px)?$/i.exec(s.trim());
+  if (!m) return 0;
+  const n = parseFloat(m[1]);
+  const u = (m[2] ?? "px").toLowerCase();
+  const factors: Record<string, number> = {
+    mm: 96 / 25.4,
+    cm: 96 / 2.54,
+    in: 96,
+    pt: 96 / 72,
+    px: 1,
+  };
+  return n * (factors[u] ?? 1);
+}
+
+export interface PageDims {
+  size: string;
+  margin: string;
+}
+
+export interface ComputedDims {
+  widthPx: number;
+  heightPx: number;
+  marginPx: number;
+  contentHPx: number;
+}
+
+export function computePageDims(dims: PageDims): ComputedDims {
+  const mm = PAGE_SIZE_MM[dims.size] ?? PAGE_SIZE_MM.A4;
+  const widthPx = mmToPx(mm.width);
+  const heightPx = mmToPx(mm.height);
+  const marginPx = parseCssLengthToPx(dims.margin);
+  return {
+    widthPx,
+    heightPx,
+    marginPx,
+    contentHPx: heightPx - 2 * marginPx,
+  };
 }
 
 export async function setPreviewHtml(
-  host: HTMLElement,
+  hostOuter: HTMLElement,
   bodyHtml: string,
+  dims: PageDims,
 ): Promise<void> {
-  if (paginated) {
-    await renderPaginated(host, bodyHtml);
-    return;
+  const computed = computePageDims(dims);
+  // Page-shaped sheet, sized to the PDF page dimensions. The .md-doc
+  // inside fills the page content area (no extra padding) so layout in
+  // preview ≈ layout in PDF. Background colour comes from the theme's
+  // --md-color-bg, so dark mode has a dark sheet (no white border).
+  let sheet = hostOuter.querySelector<HTMLElement>(".preview-sheet");
+  if (!sheet) {
+    hostOuter.innerHTML = `<div class="preview-sheet"><article id="preview" class="md-doc"></article></div>`;
+    sheet = hostOuter.querySelector<HTMLElement>(".preview-sheet")!;
   }
-  await renderFast(host, bodyHtml);
-}
+  sheet.style.setProperty("--sheet-width", `${computed.widthPx}px`);
+  sheet.style.setProperty("--sheet-padding", `${computed.marginPx}px`);
+  sheet.style.setProperty("--sheet-page-h", `${computed.contentHPx}px`);
 
-async function renderFast(host: HTMLElement, bodyHtml: string): Promise<void> {
-  // If we were just in paginated mode, the host has pagedjs structure —
-  // tear it down so morphdom can target a fresh article.
-  if (host.querySelector(".pagedjs_pages")) {
-    host.innerHTML = `<article id="preview" class="md-doc"></article>`;
-  }
-  // host should be the article; if it's a wrapper, find the article.
-  const target =
-    host.id === "preview" ? host : (host.querySelector("#preview") as HTMLElement | null);
-  if (!target) {
-    host.innerHTML = `<article id="preview" class="md-doc">${bodyHtml}</article>`;
-    await runMermaidIn(host);
-    return;
-  }
+  const target = sheet.querySelector<HTMLElement>("#preview")!;
   const fresh = document.createElement("article");
   fresh.id = "preview";
   fresh.className = "md-doc";
@@ -102,31 +132,35 @@ async function renderFast(host: HTMLElement, bodyHtml: string): Promise<void> {
   morphdom(target, fresh, {
     onBeforeElUpdated: (fromEl, toEl) => !fromEl.isEqualNode(toEl),
   });
+
   await runMermaidIn(target);
+  // Mirror .md-doc's computed background onto the sheet so the padding
+  // area (the simulated page margin) matches the doc colour — no white
+  // border in dark mode.
+  const bg = getComputedStyle(target).backgroundColor;
+  if (bg && bg !== "rgba(0, 0, 0, 0)") sheet.style.backgroundColor = bg;
+  // Mermaid changes heights; re-measure breaks after it settles.
+  placeNaturalBreaks(sheet, computed);
 }
 
-async function renderPaginated(
-  host: HTMLElement,
-  bodyHtml: string,
-): Promise<void> {
-  // Lazy load pagedjs on first use.
-  if (!previewer) {
-    const mod = await import("pagedjs");
-    previewer = new mod.Previewer();
+function placeNaturalBreaks(sheet: HTMLElement, dims: ComputedDims): void {
+  // Remove old break markers.
+  sheet.querySelectorAll(".natural-break").forEach((el) => el.remove());
+
+  const article = sheet.querySelector<HTMLElement>("#preview");
+  if (!article) return;
+  const innerHeight = article.scrollHeight;
+  if (innerHeight <= dims.contentHPx + 4) return; // single page
+
+  const numBreaks = Math.floor((innerHeight - 1) / dims.contentHPx);
+  for (let i = 1; i <= numBreaks; i++) {
+    const y = dims.marginPx + i * dims.contentHPx;
+    const div = document.createElement("div");
+    div.className = "natural-break";
+    div.style.top = `${y}px`;
+    div.dataset.page = String(i + 1);
+    sheet.appendChild(div);
   }
-  // Reset host completely — pagedjs re-builds the page DOM each run.
-  host.innerHTML = "";
-  // Build a wrapper article that pagedjs will fragment into pages.
-  const wrapper = `<article class="md-doc">${bodyHtml}</article>`;
-  try {
-    await previewer.preview(wrapper, [], host);
-  } catch (err) {
-    console.error("pagedjs preview failed", err);
-    host.innerHTML = `<article class="md-doc">${bodyHtml}</article>`;
-  }
-  // Run mermaid inside the paginated output. Mermaid blocks that span
-  // pages will look odd; users can insert manual page breaks to avoid it.
-  await runMermaidIn(host);
 }
 
 async function runMermaidIn(root: HTMLElement): Promise<void> {
