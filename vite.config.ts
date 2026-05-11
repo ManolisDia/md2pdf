@@ -11,7 +11,12 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      "/api": "http://localhost:5174",
+      // Regex form so we only proxy /api/* and /__print/*, not /api.ts
+      // (which is a relative TS source import).
+      "^/api/": "http://localhost:5174",
+      "^/__print/": "http://localhost:5174",
+      "^/__vendor/": "http://localhost:5174",
+      "^/themes/": "http://localhost:5174",
     },
   },
   optimizeDeps: {
