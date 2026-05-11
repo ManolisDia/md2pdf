@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Local web app: Markdown → PDF with Obsidian-flavored features and themeable styling",
   "scripts": {
-    "start": "concurrently -k -n server,client -c blue,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "start": "concurrently -k -n server,client -c blue,magenta \"tsx src/server/index.ts\" \"vite\"",
     "dev:server": "tsx watch src/server/index.ts",
     "dev:client": "vite",
     "build": "vite build && tsc -p tsconfig.server.json",
