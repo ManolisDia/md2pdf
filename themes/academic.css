@@ -50,6 +50,7 @@
   background: #fafaf7;
 }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e8e3d8;
   --md-color-headings: #f8f4ea;

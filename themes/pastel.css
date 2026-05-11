@@ -60,6 +60,7 @@
 
 .md-doc .callout { border-radius: 12px; border-width: 1px; }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e2d9eb;
   --md-color-headings: #f5e9ff;

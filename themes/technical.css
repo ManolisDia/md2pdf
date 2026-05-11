@@ -45,6 +45,7 @@
   color: white;
 }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e2e8f0;
   --md-color-headings: #f1f5f9;

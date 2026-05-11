@@ -42,6 +42,7 @@
 }
 
 /* DARK — classic green phosphor terminal */
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #c8f7c5;
   --md-color-headings: #5fff5f;

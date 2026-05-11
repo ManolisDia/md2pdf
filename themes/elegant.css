@@ -70,6 +70,7 @@
   font-size: 1.4em;
 }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e8dcc8;
   --md-color-headings: #f5ead4;

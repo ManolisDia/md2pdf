@@ -48,6 +48,7 @@
    [data-mode="dark"] .md-doc block. The selector targets .md-doc
    directly (not an ancestor) so it beats user-YAML-vars which also
    live on .md-doc. */
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e5e5e5;
   --md-color-headings: #fafafa;

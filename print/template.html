@@ -10,9 +10,29 @@
 /*{{THEME_CSS}}*/
 /*{{USER_VARS}}*/
 
-/* Print-only document chrome */
+/* Print-only document chrome.
+   @page margin is 0 so the entire page surface is paintable; the
+   user-configured page margin becomes body padding instead. This way
+   the margin area is the same colour as the document body — no white
+   strip in dark-mode PDFs. */
 html, body { margin: 0; padding: 0; }
-body { background: white; }
+html { background: var(--md-color-bg); }
+body {
+  background: var(--md-color-bg);
+  color: var(--md-color-text);
+  padding: var(--md-pdf-margin, 2cm);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+body > .md-doc {
+  /* Inside the print body, .md-doc fills the content area (body
+     already provides the visual margin via padding). */
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
 
 .doc-header {
   text-align: center;

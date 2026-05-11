@@ -87,12 +87,14 @@ export async function renderPdf(opts: PdfOptions): Promise<Buffer> {
     });
     await page.evaluateHandle("document.fonts.ready");
 
-    const margin = opts.config.page.margin;
+    // @page margin is 0 — the user-configured margin lives on body
+    // padding so the margin area is painted in the document bg colour.
+    // Set Puppeteer's margin to 0 to match.
     const pdf = await page.pdf({
       preferCSSPageSize: true,
       printBackground: true,
       format: opts.config.page.size,
-      margin: { top: margin, right: margin, bottom: margin, left: margin },
+      margin: { top: "0", right: "0", bottom: "0", left: "0" },
     });
     return Buffer.from(pdf);
   } finally {
@@ -129,7 +131,7 @@ async function buildPrintHtml(opts: PdfOptions): Promise<string> {
     }
   }
 
-  const pageCss = `@page { size: ${config.page.size}; margin: ${config.page.margin}; }`;
+  const pageCss = `@page { size: ${config.page.size}; margin: 0; } :root { --md-pdf-margin: ${config.page.margin}; }`;
 
   const katexCss = await readFile(
     resolve(rootDir, "node_modules", "katex", "dist", "katex.min.css"),

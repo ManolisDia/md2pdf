@@ -31,6 +31,7 @@
 }
 
 /* GitHub dark mode — mirrors github.com dark theme. */
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #f0f6fc;
   --md-color-headings: #f0f6fc;

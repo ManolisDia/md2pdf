@@ -66,6 +66,7 @@
   background: var(--md-color-code-bg);
 }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #cbd5e1;
   --md-color-headings: #f8fafc;

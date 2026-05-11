@@ -74,6 +74,7 @@
   text-align: center;
 }
 
+[data-mode="dark"],
 [data-mode="dark"] .md-doc {
   --md-color-text: #e7e3da;
   --md-color-headings: #fdfaf2;
