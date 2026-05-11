@@ -3,12 +3,22 @@
  * via dynamic import, then opens a BrowserWindow pointed at it. The
  * server already serves the built client in production mode.
  */
-const { app, BrowserWindow, shell, Menu } = require("electron");
+const { app, BrowserWindow, shell, Menu, dialog } = require("electron");
 const path = require("node:path");
+const net = require("node:net");
 const { pathToFileURL } = require("node:url");
 
+// Single-instance lock: if md2pdf is already running, focus the existing
+// window instead of spawning a second process that would fail to bind
+// the server port and die silently.
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+  return;
+}
+
 const isDev = !app.isPackaged;
-const PORT = Number(process.env.MD2PDF_PORT || 5174);
+let PORT = Number(process.env.MD2PDF_PORT || 5174);
 
 function getAppRoot() {
   if (isDev) return path.resolve(__dirname, "..");
@@ -16,9 +26,28 @@ function getAppRoot() {
   return path.join(process.resourcesPath, "app");
 }
 
+// Find a free port if the preferred one is taken, so two installs of
+// md2pdf (or a stale process holding 5174) don't break startup.
+function findFreePort(preferred) {
+  return new Promise((resolve) => {
+    const tryPort = (p) => {
+      const srv = net.createServer();
+      srv.once("error", () => {
+        srv.close();
+        if (p - preferred > 20) resolve(0); // give up — let OS choose
+        else tryPort(p + 1);
+      });
+      srv.listen(p, "127.0.0.1", () => {
+        const port = srv.address().port;
+        srv.close(() => resolve(port));
+      });
+    };
+    tryPort(preferred);
+  });
+}
+
 // Server config (read by src/server/index.ts).
 process.env.MD2PDF_NO_OPEN = "1"; // don't try to open a browser
-process.env.PORT = String(PORT);
 process.env.NODE_ENV = "production";
 process.env.MD2PDF_ROOT = getAppRoot();
 
@@ -86,12 +115,16 @@ function createWindow() {
 
 app.whenReady().then(async () => {
   try {
+    // Pick a free port now; export it so the server picks it up.
+    PORT = await findFreePort(PORT);
+    if (!PORT) throw new Error("could not find a free port for the server");
+    process.env.PORT = String(PORT);
+
     await startServer();
     await waitForServer();
     createWindow();
   } catch (err) {
     console.error("[md2pdf] startup failed:", err);
-    const { dialog } = require("electron");
     dialog.showErrorBox(
       "md2pdf failed to start",
       String(err && err.stack ? err.stack : err),
@@ -103,6 +136,14 @@ app.whenReady().then(async () => {
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0 && serverStarted) {
     createWindow();
+  }
+});
+
+// If a second instance launches, focus the existing window instead.
+app.on("second-instance", () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
   }
 });
 
