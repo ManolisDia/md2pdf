@@ -44,3 +44,25 @@
   background: var(--md-color-headings);
   color: white;
 }
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e2e8f0;
+  --md-color-headings: #f1f5f9;
+  --md-color-link: #38bdf8;
+  --md-color-accent: #22d3ee;
+  --md-color-code-bg: #1e293b;
+  --md-color-rule: #334155;
+  --md-color-bg: #0f172a;
+}
+[data-mode="dark"] .md-doc :not(pre) > code {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+[data-mode="dark"] .md-doc table {
+  border-color: #334155;
+}
+[data-mode="dark"] .md-doc table th {
+  background: #1e293b;
+  color: #f1f5f9;
+}

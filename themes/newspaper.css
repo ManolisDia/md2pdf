@@ -1,0 +1,86 @@
+/* newspaper — tight serif, condensed leading, lots of contrast.
+   Inspired by broadsheet typography. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Source Serif", "Times New Roman", serif;
+  --md-font-headings: "Source Serif", "Times New Roman", serif;
+  --md-color-text: #1a1a1a;
+  --md-color-headings: #000;
+  --md-color-link: #8c1c13;
+  --md-color-accent: #8c1c13;
+  --md-color-code-bg: #f5f2ea;
+  --md-color-rule: #1a1a1a;
+  --md-line-height: 1.4;
+  --md-max-width: 740px;
+  --md-font-size: 10.5pt;
+}
+
+.md-doc {
+  text-align: justify;
+  hyphens: auto;
+  letter-spacing: -0.005em;
+}
+
+.md-doc h1 {
+  font-family: var(--md-font-headings);
+  font-size: 3em;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  margin: 0 0 0.2em 0;
+  border-bottom: 4px double var(--md-color-rule);
+  padding-bottom: 0.3em;
+  letter-spacing: -0.03em;
+}
+
+.md-doc h1 + p,
+.md-doc h1 + p::first-line {
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.md-doc h2 {
+  font-weight: 800;
+  font-size: 1.6em;
+  border-bottom: 1px solid var(--md-color-rule);
+  padding-bottom: 0.2em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.md-doc h3 {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.md-doc p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.2em;
+  line-height: 0.85;
+  padding: 0.05em 0.08em 0 0;
+  font-weight: 700;
+}
+
+.md-doc blockquote {
+  border-left: none;
+  border-top: 1px solid var(--md-color-rule);
+  border-bottom: 1px solid var(--md-color-rule);
+  margin: 1em 1em;
+  padding: 0.6em 1em;
+  font-style: italic;
+  font-size: 1.05em;
+  text-align: center;
+}
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e7e3da;
+  --md-color-headings: #fdfaf2;
+  --md-color-link: #ef9a9a;
+  --md-color-accent: #ef9a9a;
+  --md-color-code-bg: #1a1814;
+  --md-color-rule: #6f6a5e;
+  --md-color-bg: #0e0c08;
+}
+[data-mode="dark"] .md-doc pre { background: #1a1814; }

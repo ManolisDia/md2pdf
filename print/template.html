@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mode="{{DATA_MODE}}">
 <head>
 <meta charset="utf-8">
 <title>{{TITLE}}</title>
@@ -38,6 +38,16 @@ body { background: white; }
 pre, .callout, table, blockquote { page-break-inside: avoid; }
 h1, h2, h3 { page-break-after: avoid; }
 img, svg, .mermaid { page-break-inside: avoid; }
+
+/* Manual page breaks (\pagebreak / \newpage in source) */
+.md-doc .page-break {
+  break-before: page;
+  page-break-before: always;
+  height: 0;
+  margin: 0;
+  border: 0;
+}
+.md-doc .page-break::before { display: none; }
 
 /*{{CUSTOM_CSS}}*/
 </style>

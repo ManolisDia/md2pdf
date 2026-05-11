@@ -3,8 +3,10 @@
 # starting palette; values you set here override it.
 #
 # Themes: academic | minimal | technical | elegant | github
+#         newspaper | terminal | pastel | whitepaper | magazine
 
 theme: academic
+dark: false
 
 page:
   size: A4            # A4 | Letter | Legal

@@ -39,3 +39,18 @@
   background: #fafafa;
   border-left: 2px solid var(--md-callout-note);
 }
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #d4d4d8;
+  --md-color-headings: #fafafa;
+  --md-color-link: #a1a1aa;
+  --md-color-accent: #fafafa;
+  --md-color-code-bg: #18181b;
+  --md-color-rule: #27272a;
+  --md-color-bg: #0a0a0a;
+}
+[data-mode="dark"] .md-doc pre {
+  background: #18181b;
+  border-color: #27272a;
+}
+[data-mode="dark"] .md-doc .callout { background: #141415; }

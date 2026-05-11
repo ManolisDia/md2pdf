@@ -44,6 +44,20 @@
   --md-callout-bug: #dc2626;
 }
 
+/* Dark-mode defaults — each theme can re-override these in its own
+   [data-mode="dark"] .md-doc block. The selector targets .md-doc
+   directly (not an ancestor) so it beats user-YAML-vars which also
+   live on .md-doc. */
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e5e5e5;
+  --md-color-headings: #fafafa;
+  --md-color-link: #6ea8ff;
+  --md-color-accent: #fbbf24;
+  --md-color-code-bg: #1f1f23;
+  --md-color-rule: #3a3a40;
+  --md-color-bg: #18181b;
+}
+
 /* Base document styling — used by every theme as a foundation. */
 .md-doc {
   font-family: var(--md-font-body);
@@ -243,3 +257,27 @@
 /* KaTeX */
 .md-doc .katex { font-size: 1.05em; }
 .md-doc .katex-display { margin: 1em 0; overflow-x: auto; overflow-y: hidden; }
+
+/* Page breaks: a visible dashed divider in screen rendering, a real
+   page break in print. The print template adds @media print rules. */
+.md-doc .page-break {
+  display: block;
+  height: 0;
+  margin: 1.5em 0;
+  border-top: 2px dashed var(--md-color-rule);
+  position: relative;
+}
+.md-doc .page-break::before {
+  content: "page break";
+  position: absolute;
+  top: -0.7em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--md-color-bg);
+  padding: 0 0.6em;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--md-color-rule);
+  font-family: var(--md-font-headings);
+}

@@ -1,0 +1,83 @@
+/* terminal — monospace everything, green-on-black retro CRT vibes. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "JetBrains Mono", Consolas, monospace;
+  --md-font-headings: "JetBrains Mono", Consolas, monospace;
+  --md-font-mono: "JetBrains Mono", Consolas, monospace;
+  --md-color-text: #1a1a1a;
+  --md-color-headings: #0a0a0a;
+  --md-color-link: #007a3d;
+  --md-color-accent: #b8860b;
+  --md-color-code-bg: #f5f5f0;
+  --md-color-rule: #888;
+  --md-line-height: 1.55;
+  --md-max-width: 760px;
+}
+
+.md-doc h1::before { content: "$ "; }
+.md-doc h2::before { content: "> "; }
+.md-doc h3::before { content: ">> "; }
+.md-doc h4::before { content: ">>> "; }
+
+.md-doc h1, .md-doc h2, .md-doc h3, .md-doc h4 {
+  font-weight: 700;
+}
+
+.md-doc h1 { font-size: 1.6em; border-bottom: 1px dashed var(--md-color-rule); }
+.md-doc h2 { font-size: 1.3em; border-bottom: 1px dashed var(--md-color-rule); }
+
+.md-doc ul, .md-doc ol { padding-left: 2em; }
+.md-doc ul li::marker { content: "* "; }
+
+.md-doc pre {
+  border: 1px solid var(--md-color-rule);
+  background: var(--md-color-code-bg);
+}
+
+.md-doc blockquote {
+  border-left: 2px solid var(--md-color-rule);
+  background: var(--md-color-code-bg);
+  font-style: normal;
+}
+
+/* DARK — classic green phosphor terminal */
+[data-mode="dark"] .md-doc {
+  --md-color-text: #c8f7c5;
+  --md-color-headings: #5fff5f;
+  --md-color-link: #88ff88;
+  --md-color-accent: #ffaf00;
+  --md-color-code-bg: #0a0a0a;
+  --md-color-rule: #2f5f2f;
+  --md-color-bg: #061106;
+}
+
+[data-mode="dark"] .md-doc pre {
+  background: #0a0a0a;
+  color: #c8f7c5;
+  border-color: #2f5f2f;
+}
+
+[data-mode="dark"] .md-doc blockquote {
+  background: #081208;
+}
+
+[data-mode="dark"] .md-doc :not(pre) > code {
+  background: #0a0a0a;
+  color: #ffd370;
+}
+
+[data-mode="dark"] .md-doc h1,
+[data-mode="dark"] .md-doc h2,
+[data-mode="dark"] .md-doc h3 {
+  text-shadow: 0 0 6px rgba(95, 255, 95, 0.4);
+}
+
+[data-mode="dark"] .md-doc table {
+  border-color: #2f5f2f;
+}
+[data-mode="dark"] .md-doc table th,
+[data-mode="dark"] .md-doc table td {
+  border-color: #2f5f2f;
+}
+[data-mode="dark"] .md-doc table th { background: #0a0a0a; }

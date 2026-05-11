@@ -18,6 +18,7 @@ import { obsidianCallouts } from "./plugins/callouts.js";
 import { wikilinks } from "./plugins/wikilinks.js";
 import { obsidianComments } from "./plugins/comments.js";
 import { mermaidBlocks } from "./plugins/mermaid.js";
+import { pageBreaks } from "./plugins/pagebreak.js";
 
 export interface PipelineOptions {
   // Optional async syntax highlighter for code blocks (server-side Shiki).
@@ -63,6 +64,7 @@ export function createPipeline(opts: PipelineOptions = {}): MarkdownIt {
   md.use(obsidianCallouts);
   md.use(wikilinks);
   md.use(mermaidBlocks);
+  md.use(pageBreaks);
 
   return md;
 }

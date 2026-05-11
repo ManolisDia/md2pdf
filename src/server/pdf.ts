@@ -147,6 +147,8 @@ async function buildPrintHtml(opts: PdfOptions): Promise<string> {
 
   const mermaidUrl = `${ASSET_BASE}/__vendor/mermaid/mermaid.esm.min.mjs`;
 
+  const dataMode = config.dark ? "dark" : "light";
+
   return tmpl
     .replace(/\{\{TITLE\}\}/g, title)
     .replace("/*{{PAGE_CSS}}*/", pageCss)
@@ -157,6 +159,7 @@ async function buildPrintHtml(opts: PdfOptions): Promise<string> {
     .replace("/*{{CUSTOM_CSS}}*/", customCss)
     .replace("{{MERMAID_URL}}", mermaidUrl)
     .replace("{{FRONTMATTER_HEADER}}", meta)
+    .replace("{{DATA_MODE}}", dataMode)
     .replace("{{BODY}}", bodyHtml);
 }
 

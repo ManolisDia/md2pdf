@@ -23,7 +23,18 @@ export interface StyleConfig {
     heading_top: string;
     max_width: string;
   };
-  theme: "academic" | "minimal" | "technical" | "elegant" | "github";
+  theme:
+    | "academic"
+    | "minimal"
+    | "technical"
+    | "elegant"
+    | "github"
+    | "newspaper"
+    | "terminal"
+    | "pastel"
+    | "whitepaper"
+    | "magazine";
+  dark: boolean;
   custom_css?: string | null;
 }
 

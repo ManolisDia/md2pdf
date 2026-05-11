@@ -29,3 +29,20 @@
   color: #59636e;
   border-left: 4px solid var(--md-color-rule);
 }
+
+/* GitHub dark mode — mirrors github.com dark theme. */
+[data-mode="dark"] .md-doc {
+  --md-color-text: #f0f6fc;
+  --md-color-headings: #f0f6fc;
+  --md-color-link: #4493f8;
+  --md-color-accent: #1f6feb;
+  --md-color-code-bg: #151b23;
+  --md-color-rule: #3d444d;
+  --md-color-bg: #0d1117;
+}
+[data-mode="dark"] .md-doc table tr:nth-child(2n) td { background: #151b23; }
+[data-mode="dark"] .md-doc blockquote { color: #9198a1; }
+[data-mode="dark"] .md-doc table th { background: #151b23; }
+[data-mode="dark"] .md-doc table th, [data-mode="dark"] .md-doc table td {
+  border-color: #3d444d;
+}

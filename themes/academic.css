@@ -49,3 +49,18 @@
 .md-doc table th {
   background: #fafaf7;
 }
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e8e3d8;
+  --md-color-headings: #f8f4ea;
+  --md-color-link: #d4a373;
+  --md-color-accent: #e9c46a;
+  --md-color-code-bg: #1f1c17;
+  --md-color-rule: #3a342a;
+  --md-color-bg: #15130f;
+}
+[data-mode="dark"] .md-doc pre {
+  background: #1f1c17;
+  border-color: #3a342a;
+}
+[data-mode="dark"] .md-doc table th { background: #1f1c17; }

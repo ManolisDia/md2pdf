@@ -36,3 +36,23 @@ export function setEditorValue(view: EditorView, value: string): void {
     changes: { from: 0, to: view.state.doc.length, insert: value },
   });
 }
+
+/**
+ * Insert text at the current cursor position, surrounded by newlines so
+ * it ends up on its own block-level line. Used for the page-break button.
+ */
+export function insertBlockAtCursor(view: EditorView, text: string): void {
+  const sel = view.state.selection.main;
+  const doc = view.state.doc;
+  const lineAt = doc.lineAt(sel.from);
+  const atLineStart = sel.from === lineAt.from;
+  const atLineEnd = sel.from === lineAt.to;
+  const before = atLineStart ? "" : "\n\n";
+  const after = atLineEnd ? "\n\n" : "\n\n";
+  const insert = `${before}${text}${after}`;
+  view.dispatch({
+    changes: { from: sel.from, to: sel.to, insert },
+    selection: { anchor: sel.from + insert.length },
+  });
+  view.focus();
+}

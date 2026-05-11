@@ -69,3 +69,19 @@
   color: var(--md-color-accent);
   font-size: 1.4em;
 }
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e8dcc8;
+  --md-color-headings: #f5ead4;
+  --md-color-link: #d4a373;
+  --md-color-accent: #f1b860;
+  --md-color-rule: #4a3d2c;
+  --md-color-bg: #1a140d;
+  --md-color-code-bg: #251c12;
+}
+[data-mode="dark"] .md-doc pre {
+  background: #251c12;
+}
+[data-mode="dark"] .md-doc blockquote {
+  border-left-color: #f1b860;
+}

@@ -110,6 +110,43 @@ body {
 }
 #preview { background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 4px; }
 
+/* Paged.js page-look in the preview pane. */
+#preview-host .pagedjs_pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0;
+}
+#preview-host .pagedjs_page {
+  background: white;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin: 0;
+  position: relative;
+}
+#preview-host .pagedjs_page::after {
+  content: "Page " counter(page);
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #6b7280;
+  letter-spacing: 0.04em;
+}
+
+/* When the preview is in dark mode, give the surrounding pane a darker
+   backdrop so the "paper" stands out. The rest of the app chrome stays
+   in its normal light styling. */
+#preview-host[data-mode="dark"] { background: #1a1a1a; }
+#preview-host[data-mode="dark"] .pagedjs_page,
+#preview-host[data-mode="dark"] #preview { box-shadow: 0 4px 14px rgba(0,0,0,0.5); }
+#preview-host[data-mode="dark"] .pagedjs_page::after { color: #a1a1aa; }
+
+/* Active button state — used for paginate toggle, dark toggle, etc. */
+.btn.is-active { background: #1f6feb; color: white; border-color: #1f6feb; }
+.btn.is-active:hover { background: #1858c4; border-color: #1858c4; }
+
 .pane-sidebar { background: #fbfbfd; }
 .sidebar-actions {
   display: flex;

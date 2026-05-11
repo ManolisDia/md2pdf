@@ -1,7 +1,15 @@
 import type { EditorView } from "@codemirror/view";
-import { createEditor, setEditorValue } from "./editor.js";
+import { createEditor, insertBlockAtCursor, setEditorValue } from "./editor.js";
 import { mountSidebar } from "./sidebar.js";
-import { applyCssVars, applyTheme, setPreviewHtml } from "./preview.js";
+import {
+  applyCssVars,
+  applyDarkMode,
+  applyPageCss,
+  applyTheme,
+  isPaginated,
+  setPaginated,
+  setPreviewHtml,
+} from "./preview.js";
 import { apiLoadConfig, apiPdf, apiRender, apiSaveConfig } from "./api.js";
 
 const SAMPLE_MARKDOWN = `---
@@ -81,6 +89,7 @@ gantt
 `;
 
 const editorHost = document.getElementById("editor")!;
+const previewHostOuter = document.getElementById("preview-host")!;
 const previewHost = document.getElementById("preview")!;
 const configHost = document.getElementById("config-editor")!;
 const themeSelect = document.getElementById("theme-select") as HTMLSelectElement;
@@ -91,6 +100,9 @@ const saveConfigBtn = document.getElementById("save-config") as HTMLButtonElemen
 const configStatus = document.getElementById("config-status")!;
 const toastEl = document.getElementById("toast")!;
 const dropzoneEl = document.getElementById("dropzone")!;
+const pagebreakBtn = document.getElementById("pagebreak-btn") as HTMLButtonElement;
+const paginateBtn = document.getElementById("paginate-btn") as HTMLButtonElement;
+const darkBtn = document.getElementById("dark-btn") as HTMLButtonElement;
 
 let markdownValue = SAMPLE_MARKDOWN;
 let yamlValue = "";
@@ -107,7 +119,9 @@ function toast(msg: string, isError = false): void {
 
 function debounceRender(): void {
   if (renderTimer) window.clearTimeout(renderTimer);
-  renderTimer = window.setTimeout(doRender, 150);
+  // Paginated mode runs Paged.js which is much slower — debounce more.
+  const delay = isPaginated() ? 500 : 150;
+  renderTimer = window.setTimeout(doRender, delay);
 }
 
 function debounceConfig(): void {
@@ -123,10 +137,36 @@ async function doRender(): Promise<void> {
     const result = await apiRender(markdownValue, yamlValue);
     applyTheme(result.theme);
     applyCssVars(result.cssVars);
-    await setPreviewHtml(previewHost, result.html);
+    const { size, margin } = parsePageFromYaml(yamlValue);
+    applyPageCss(size, margin);
+    applyDarkMode(parseDarkFromYaml(yamlValue));
+    // In paginated mode pagedjs rebuilds the host. Pass the outer host so
+    // the rebuild can happen.
+    const host = isPaginated() ? previewHostOuter : previewHost;
+    await setPreviewHtml(host, result.html);
   } catch (err) {
     toast((err as Error).message, true);
   }
+}
+
+function parsePageFromYaml(yaml: string): { size: string; margin: string } {
+  const sizeM = /^[ \t]*size:\s*([^\s#]+)/m.exec(yaml);
+  const marginM = /^[ \t]*margin:\s*([^\s#]+)/m.exec(yaml);
+  return {
+    size: sizeM?.[1] ?? "A4",
+    margin: marginM?.[1] ?? "2cm",
+  };
+}
+
+function parseDarkFromYaml(yaml: string): boolean {
+  return /^dark:\s*true\b/m.test(yaml);
+}
+
+function setYamlDark(yaml: string, dark: boolean): string {
+  if (/^dark:\s*(true|false)\b/m.test(yaml)) {
+    return yaml.replace(/^dark:\s*(true|false)\b/m, `dark: ${dark}`);
+  }
+  return `${yaml.trimEnd()}\ndark: ${dark}\n`;
 }
 
 function syncThemeSelectFromYaml(): void {
@@ -213,6 +253,35 @@ function setupDropzone(): void {
     });
     debounceRender();
   });
+
+  pagebreakBtn.addEventListener("click", () => {
+    if (!mainEditor) return;
+    insertBlockAtCursor(mainEditor, "\\pagebreak");
+  });
+
+  paginateBtn.addEventListener("click", () => {
+    const on = !isPaginated();
+    setPaginated(on);
+    paginateBtn.classList.toggle("is-active", on);
+    debounceRender();
+  });
+
+  darkBtn.addEventListener("click", () => {
+    const next = !parseDarkFromYaml(yamlValue);
+    yamlValue = setYamlDark(yamlValue, next);
+    sidebar.configEditor.dispatch({
+      changes: {
+        from: 0,
+        to: sidebar.configEditor.state.doc.length,
+        insert: yamlValue,
+      },
+    });
+    darkBtn.classList.toggle("is-active", next);
+    applyDarkMode(next);
+    debounceRender();
+  });
+  // Initial dark state
+  darkBtn.classList.toggle("is-active", parseDarkFromYaml(yamlValue));
 
   loadBtn.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", async () => {

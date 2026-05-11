@@ -49,7 +49,18 @@ app.get("/__print/:id", (req, res) => {
 
 app.get("/api/themes", (_req, res) => {
   res.json({
-    themes: ["academic", "minimal", "technical", "elegant", "github"],
+    themes: [
+      "academic",
+      "minimal",
+      "technical",
+      "elegant",
+      "github",
+      "newspaper",
+      "terminal",
+      "pastel",
+      "whitepaper",
+      "magazine",
+    ],
   });
 });
 

@@ -1,0 +1,77 @@
+/* pastel — soft warm palette, rounded blocks, friendly. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Inter", -apple-system, sans-serif;
+  --md-font-headings: "Inter", -apple-system, sans-serif;
+  --md-color-text: #4a4453;
+  --md-color-headings: #3a2a4a;
+  --md-color-link: #c084fc;
+  --md-color-accent: #fb7185;
+  --md-color-code-bg: #fdf2f8;
+  --md-color-rule: #fce7f3;
+  --md-color-bg: #fffaf6;
+  --md-callout-note: #c084fc;
+  --md-callout-tip: #6ee7b7;
+  --md-callout-warning: #fbbf24;
+  --md-callout-danger: #fb7185;
+  --md-line-height: 1.7;
+  --md-max-width: 700px;
+}
+
+.md-doc {
+  background: var(--md-color-bg);
+}
+
+.md-doc h1, .md-doc h2, .md-doc h3 {
+  font-weight: 600;
+  border-bottom: none;
+}
+.md-doc h1 { color: #c084fc; font-size: 2.2em; }
+.md-doc h2 { color: #fb7185; }
+.md-doc h3 { color: #f59e0b; }
+
+.md-doc pre {
+  border-radius: 12px;
+  background: var(--md-color-code-bg);
+  border: 1px solid var(--md-color-rule);
+}
+
+.md-doc :not(pre) > code {
+  background: var(--md-color-code-bg);
+  color: #c026d3;
+  border-radius: 6px;
+}
+
+.md-doc table {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--md-color-rule);
+}
+.md-doc table th, .md-doc table td { border-color: var(--md-color-rule); }
+.md-doc table th { background: var(--md-color-code-bg); color: #6b21a8; }
+
+.md-doc blockquote {
+  background: #faf5ff;
+  border-left: 4px solid #c084fc;
+  border-radius: 8px;
+  padding: 0.6em 1em;
+}
+
+.md-doc .callout { border-radius: 12px; border-width: 1px; }
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #e2d9eb;
+  --md-color-headings: #f5e9ff;
+  --md-color-link: #d8b4fe;
+  --md-color-accent: #fda4af;
+  --md-color-code-bg: #2a1f2e;
+  --md-color-rule: #3a2f3e;
+  --md-color-bg: #1c1622;
+}
+[data-mode="dark"] .md-doc h1 { color: #d8b4fe; }
+[data-mode="dark"] .md-doc h2 { color: #fda4af; }
+[data-mode="dark"] .md-doc h3 { color: #fcd34d; }
+[data-mode="dark"] .md-doc blockquote { background: #251a2c; border-left-color: #d8b4fe; }
+[data-mode="dark"] .md-doc :not(pre) > code { color: #f0abfc; background: #2a1f2e; }
+[data-mode="dark"] .md-doc table th { background: #2a1f2e; color: #f0abfc; }

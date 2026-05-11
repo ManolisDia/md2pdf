@@ -1,0 +1,80 @@
+/* whitepaper — corporate/research report: clean, formal, neutral. */
+@import url("./_variables.css");
+
+:root {
+  --md-font-body: "Inter", -apple-system, sans-serif;
+  --md-font-headings: "Inter", -apple-system, sans-serif;
+  --md-color-text: #1e293b;
+  --md-color-headings: #0f172a;
+  --md-color-link: #1e40af;
+  --md-color-accent: #1e40af;
+  --md-color-code-bg: #f8fafc;
+  --md-color-rule: #cbd5e1;
+  --md-color-bg: #ffffff;
+  --md-line-height: 1.65;
+  --md-max-width: 720px;
+}
+
+.md-doc h1 {
+  font-weight: 700;
+  font-size: 2em;
+  color: var(--md-color-headings);
+  border-bottom: 3px solid var(--md-color-accent);
+  padding-bottom: 0.25em;
+}
+.md-doc h2 {
+  font-weight: 600;
+  font-size: 1.4em;
+  color: var(--md-color-headings);
+  border-bottom: 1px solid var(--md-color-rule);
+  padding-bottom: 0.2em;
+  counter-increment: h2;
+}
+.md-doc h2::before {
+  content: counter(h2) ". ";
+  color: var(--md-color-accent);
+  font-weight: 700;
+}
+.md-doc h3 {
+  font-weight: 600;
+  font-size: 1.15em;
+  color: var(--md-color-accent);
+}
+
+.md-doc { counter-reset: h2; }
+
+.md-doc table {
+  border: 1px solid var(--md-color-rule);
+}
+.md-doc table th {
+  background: var(--md-color-headings);
+  color: white;
+  font-weight: 600;
+}
+.md-doc table tr:nth-child(2n) td { background: var(--md-color-code-bg); }
+
+.md-doc blockquote {
+  background: var(--md-color-code-bg);
+  border-left: 3px solid var(--md-color-accent);
+  padding: 0.6em 1em;
+  font-style: normal;
+  color: var(--md-color-text);
+}
+
+.md-doc pre {
+  border: 1px solid var(--md-color-rule);
+  background: var(--md-color-code-bg);
+}
+
+[data-mode="dark"] .md-doc {
+  --md-color-text: #cbd5e1;
+  --md-color-headings: #f8fafc;
+  --md-color-link: #93c5fd;
+  --md-color-accent: #60a5fa;
+  --md-color-code-bg: #1e293b;
+  --md-color-rule: #334155;
+  --md-color-bg: #0f172a;
+}
+[data-mode="dark"] .md-doc table th { background: #1e293b; color: #f8fafc; }
+[data-mode="dark"] .md-doc table tr:nth-child(2n) td { background: #1a2638; }
+[data-mode="dark"] .md-doc blockquote { background: #1a2638; }

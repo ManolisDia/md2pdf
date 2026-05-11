@@ -6,6 +6,7 @@ import type { StyleConfig } from "../shared/types.js";
 
 const DEFAULT_CONFIG: StyleConfig = {
   theme: "academic",
+  dark: false,
   page: { size: "A4", margin: "2cm" },
   fonts: {
     body: "Source Serif",
@@ -36,6 +37,11 @@ const VALID_THEMES = new Set([
   "technical",
   "elegant",
   "github",
+  "newspaper",
+  "terminal",
+  "pastel",
+  "whitepaper",
+  "magazine",
 ]);
 
 export function parseStyleConfig(yamlSrc: string): StyleConfig {
@@ -91,6 +97,7 @@ function mergeConfig(
 ): StyleConfig {
   const out: StyleConfig = {
     theme: resolveTheme(override.theme ?? base.theme) as StyleConfig["theme"],
+    dark: override.dark ?? base.dark,
     page: { ...base.page, ...(override.page ?? {}) },
     fonts: { ...base.fonts, ...(override.fonts ?? {}) },
     colors: { ...base.colors, ...(override.colors ?? {}) },
