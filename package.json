@@ -33,12 +33,14 @@
       "config/**/*",
       "package.json",
       "node_modules/**/*",
-      "!node_modules/**/test/**",
-      "!node_modules/**/tests/**",
-      "!node_modules/**/*.md",
-      "!node_modules/**/*.map",
-      "!node_modules/**/*.d.ts"
+      "!node_modules/electron",
+      "!node_modules/electron-builder",
+      "!node_modules/app-builder-lib",
+      "!node_modules/builder-util",
+      "!node_modules/dmg-builder"
     ],
+    "npmRebuild": false,
+    "buildDependenciesFromSource": false,
     "win": {
       "target": ["nsis", "portable"]
     },

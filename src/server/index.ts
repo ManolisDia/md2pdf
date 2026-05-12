@@ -2,7 +2,6 @@ import express from "express";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import open from "open";
 import YAML from "yaml";
 
 import { renderToHtml, warmHighlighter } from "./render.js";
@@ -170,9 +169,15 @@ const server = app.listen(PORT, () => {
   // Warm Shiki in the background so the first render is snappy.
   warmHighlighter().catch(() => {});
 
-  // Auto-open the browser on first start. In dev, Vite is serving the client.
+  // Auto-open the browser on first start. In dev, Vite is serving the
+  // client. Dynamic import keeps `open` out of the dependency graph
+  // when MD2PDF_NO_OPEN is set (e.g. inside the Electron build, where
+  // the packaged Node ESM loader doesn't always walk up to
+  // resources/app/node_modules).
   if (!process.env.MD2PDF_NO_OPEN) {
-    open(browserUrl).catch(() => {});
+    import("open")
+      .then((m) => m.default(browserUrl))
+      .catch(() => {});
   }
 });
 
